@@ -1,7 +1,7 @@
 """
 Contains all the settings stuff and stuff and even more stuff than this. Just kidding, it's just the settings man!
 """
-MODE = 'experimental_train'
+MODE = 'k_fold_train'
 
 '------------------------------------------------Training parameters---------------------------------------------------'
 EPOCHS = 30

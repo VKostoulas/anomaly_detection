@@ -74,7 +74,7 @@ def k_fold_training(s):
             classifier_model = build_classifier(architecture=s.CLASSIFIER_ARCHITECTURE,
                                                 loss_layers=s.PERCEPTUAL_LOSS_LAYERS,
                                                 image_size=image_size, clf_kwargs=s.CLASSIFIER_PARAMS)
-            anomaly_detector = build_anomaly_detection_model(s, auto_encoder_model, classifier_model)
+            anomaly_detector = build_anomaly_detection_model(s, auto_encoder_model, classifier_model, show_graph=True)
             model_path = create_model_path(s)
             callbacks = define_callbacks(s, val_dataset, auto_encoder_model, model_path)
             anomaly_detector.fit(train_dataset, validation_data=val_dataset, epochs=s.EPOCHS, callbacks=callbacks)

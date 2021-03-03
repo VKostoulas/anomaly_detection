@@ -4,6 +4,7 @@
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
 
 import os
+import numpy as np
 from python_settings import settings as s
 import settings as local_settings
 
@@ -31,21 +32,40 @@ if __name__ == '__main__':
 
     elif s.MODE == 'k_fold_train':
 
-        experiment_2_global_params = {'TRAIN_BATCH_SIZE': 4,
+        experiment_1_global_params = {'TRAIN_BATCH_SIZE': 4,
                                       'INFER_BATCH_SIZE': 32,
                                       'OPTIMIZER_PARAMS': {'lr': 0.0001},
+                                      'USE_MIXED_PRECISION': False,
                                       'AUTOENCODER_ARCHITECTURE': 'AdvancedAutoEncoder',
                                       'AUTOENCODER_PARAMS':
                                           {'filters_keep_percentage': 1.0, 'min_filters': 16, 'latent_dim': 512,
                                            'kernel_initializer': 'glorot_uniform',
-                                           'filters': ([64], [64, 128, 128, 256, 512, 512], [512, 512, 256, 128, 128, 64],[64]),
+                                           'filters': ([64],
+                                                       [64, 128, 128, 256, 256, 512],
+                                                       [512, 256, 256, 128, 128, 64],
+                                                       [64]),
                                            'kernel_size': 3, 'mode': 'ae', 'apply_batch_norm': False},
                                       'CLASSIFIER_ARCHITECTURE': 'MobileNet',
                                       'CLASSIFIER_PARAMS': {},
                                       'PERCEPTUAL_LOSS_LAYERS': ['block_7_depthwise_relu'],
                                       'RESIZE_SHAPE': (64, 64)}
 
-        experiments_params = [experiment_2_global_params]
+        experiment_2_global_params = {'TRAIN_BATCH_SIZE': 64,
+                                      'INFER_BATCH_SIZE': 128,
+                                      'OPTIMIZER_PARAMS': {'lr': 0.001},
+                                      'USE_MIXED_PRECISION': False,
+                                      'AUTOENCODER_ARCHITECTURE': 'SimpleAutoEncoder',
+                                      'AUTOENCODER_PARAMS':
+                                          {'filters_keep_percentage': 1.0, 'min_filters': 16, 'latent_dim': 512,
+                                           'kernel_initializer': 'glorot_uniform',
+                                           'filters': ([], [64, 128, 256, 512, 512], [512, 256, 128, 64]),
+                                           'kernel_size': 3, 'mode': 'vae', 'apply_batch_norm': False},
+                                      'CLASSIFIER_ARCHITECTURE': 'MobileNet',
+                                      'CLASSIFIER_PARAMS': {},
+                                      'PERCEPTUAL_LOSS_LAYERS': ['block_7_depthwise_relu'],
+                                      'RESIZE_SHAPE': (64, 64)}
+
+        experiments_params = [experiment_1_global_params, experiment_2_global_params]
         for params in experiments_params:
             for arg in params:
                 setattr(s, arg, params[arg])
@@ -96,4 +116,11 @@ if __name__ == '__main__':
                            'normal_class': 0, 'anomaly_classes': [5]}
 
             for params in global_params:
-                experimental_training(s, mode=mode, data_params=data_params, global_params=params)
+                for curr_class in range(s.CLASSES):
+                    anomaly_classes = [np.random.randint(0, s.CLASSES)]
+                    while anomaly_classes[0] == curr_class:
+                        anomaly_classes = [np.random.randint(0, s.CLASSES)]
+
+                    data_params = {'s': s, 'train_class_percentage': ':90', 'val_class_percentage': '90:',
+                                   'normal_class': curr_class, 'anomaly_classes': anomaly_classes}
+                    experimental_training(s, mode=mode, data_params=data_params, global_params=params)
