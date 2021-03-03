@@ -3,6 +3,7 @@
 
 # except this
 !.gitignore
+!requirements.txt
 !main.py
 !settings.py
 !/functions
