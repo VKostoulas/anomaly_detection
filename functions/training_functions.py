@@ -38,7 +38,7 @@ def train_anomaly_detection_model(s):
     auto_encoder_model = build_autoencoder(s.AUTOENCODER_ARCHITECTURE, image_size, s.AUTOENCODER_PARAMS)
     classifier_model = build_classifier(architecture=s.CLASSIFIER_ARCHITECTURE, loss_layers=s.PERCEPTUAL_LOSS_LAYERS,
                                         image_size=image_size, clf_kwargs=s.CLASSIFIER_PARAMS)
-    model = build_anomaly_detection_model(s=s, auto_encoder=auto_encoder_model, classifier=classifier_model)
+    model = build_anomaly_detection_model(s=s, auto_encoder=auto_encoder_model, classifier=classifier_model, show_graph=True)
     model_path = create_model_path(s)
     callbacks = define_callbacks(s=s, val_dataset=val_dataset, auto_encoder=auto_encoder_model, model_path=model_path)
     model.fit(x=train_dataset, validation_data=val_dataset, epochs=s.EPOCHS, callbacks=callbacks)

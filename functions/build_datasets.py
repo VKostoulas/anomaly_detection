@@ -44,7 +44,7 @@ def choose_dataset(s, train_class_percentage=None, val_class_percentage=None, no
                                                 return_metadata=False, resize_shape=s.RESIZE_SHAPE)
         # for some reason, using resize in training but not in validation seems to improve AUC a lot
         val_dataset, metadata, val_num_of_batches = build_tf_dataset(dataset_name=s.DATASET_NAME,
-                                                                     dataset_split='validation',
+                                                                     dataset_split='validation'+s.DATASET_SPLIT,
                                                                      batch_size=s.INFER_BATCH_SIZE,
                                                                      num_of_classes=s.CLASSES, use_augmentation=False,
                                                                      resize_shape=s.RESIZE_SHAPE)

@@ -6,7 +6,7 @@
 import os
 import numpy as np
 from python_settings import settings as s
-import settings as local_settings
+import my_settings as local_settings
 
 from functions.dataset_functions import create_tfrecords_from_tfdatasets
 from functions.training_functions import train_anomaly_detection_model, k_fold_training, gans_training, \
