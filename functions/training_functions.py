@@ -32,6 +32,7 @@ def train_simple_classifier(s, model, train_data, val_data):
 
 
 def train_anomaly_detection_model(s):
+    tf.keras.backend.clear_session()
     define_mixed_precision_policy(s.USE_MIXED_PRECISION)
     train_dataset, val_dataset, test_dataset = choose_dataset(s)
     image_size = define_image_size(s)
@@ -63,6 +64,7 @@ def k_fold_training(s):
 
         for k_step in np.arange(0, 100, 100/k_folds):
 
+            tf.keras.backend.clear_session()
             train_class_percentage, val_class_percentage = calculate_class_percentage(k_folds, k_step)
             train_dataset, val_dataset, test_dataset = choose_dataset(s=s,
                                                                       train_class_percentage=train_class_percentage,
@@ -164,6 +166,7 @@ def experimental_training(s, mode, data_params, ae_params=None, clf_params=None,
     train_dataset, val_dataset, test_dataset = choose_dataset(**data_params)
 
     if mode == 'different_losses':
+        tf.keras.backend.clear_session()
         auto_encoder_model = build_autoencoder(s.AUTOENCODER_ARCHITECTURE, define_image_size(s), s.AUTOENCODER_PARAMS)
         classifier_model = build_classifier(architecture=s.CLASSIFIER_ARCHITECTURE,
                                             loss_layers=s.PERCEPTUAL_LOSS_LAYERS,
@@ -175,7 +178,7 @@ def experimental_training(s, mode, data_params, ae_params=None, clf_params=None,
         _ = inference_on_test_set(s, model, test_dataset, model_path, verbose=0)
 
     if mode == 'multi_classifier':
-
+        tf.keras.backend.clear_session()
         image_size = define_image_size(s)
         autoencoder = build_autoencoder(s.AUTOENCODER_ARCHITECTURE, image_size, s.s.AUTOENCODER_PARAMS)
         classifiers = []
@@ -191,6 +194,7 @@ def experimental_training(s, mode, data_params, ae_params=None, clf_params=None,
         model_paths = []
 
         for params1, params2 in zip(ae_params, clf_params):
+            tf.keras.backend.clear_session()
             autoencoder = build_autoencoder(**params1)
             classifier = build_classifier(**params2)
             anomaly_detector = build_anomaly_detection_model(s, autoencoder, classifier)
