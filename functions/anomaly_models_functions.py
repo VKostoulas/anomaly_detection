@@ -20,6 +20,7 @@ from tensorflow.keras.applications.resnet import ResNet50
 from tensorflow.keras.mixed_precision import experimental as mixed_precision
 
 from architectures.simple_autoencoder import simple_auto_encoder
+from architectures.inception_autoencoder import inception_auto_encoder
 from architectures.functional_autoencoder import functional_auto_encoder, functional_decode_step
 from architectures.advanced_residual_auto_encoder import advanced_auto_encoder
 from architectures.unet_autoencoder import unet_autoencoder
@@ -49,6 +50,9 @@ def define_auto_encoder_architecture(architecture_name, image_size, auto_encoder
     elif architecture_name == 'UnetAutoEncoder':
         model = unet_autoencoder(input_layer_shape=image_size, output_channels=image_size[-1],
                                  kernel_size=auto_encoder_params['kernel_size'])
+    elif architecture_name == 'InceptionAutoEncoder':
+        model = inception_auto_encoder(input_layer_shape=image_size, output_channels=image_size[-1],
+                                       latent_dim=auto_encoder_params['latent_dim'])
     else:
         raise ValueError(f"Auto Encoder '{architecture_name}' is wrong or not implemented.")
     return model
@@ -82,7 +86,7 @@ def define_classifier_architecture(architecture_name, image_size, weights, class
 def build_autoencoder(architecture, image_size, ae_kwargs):
     autoencoder = define_auto_encoder_architecture(architecture, image_size, ae_kwargs)
     outputs = CustomLayers(name='concat_layer', dtype='float32')([autoencoder.input, autoencoder.output])
-    return tf.keras.Model(inputs=autoencoder.inputs, outputs=outputs, name='functional_auto_encoder')
+    return tf.keras.Model(inputs=autoencoder.inputs, outputs=outputs, name=autoencoder.name)
 
 
 def build_classifier(architecture, loss_layers, image_size, weights='imagenet', clf_kwargs=None):
@@ -246,5 +250,5 @@ def modified_autoencoder(s):
     model_output = Activation('tanh', dtype='float32', name='tanh')(model_output)
     outputs = CustomLayers(name='concat_layer', dtype='float32')([encoder.input, model_output])
 
-    return tf.keras.Model(inputs=encoder.inputs, outputs=outputs, name='functional_auto_encoder')
+    return tf.keras.Model(inputs=encoder.inputs, outputs=outputs, name='auto_encoder')
 

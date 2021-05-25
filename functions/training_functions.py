@@ -197,7 +197,7 @@ def experimental_training(s, mode, data_params, ae_params=None, clf_params=None,
             tf.keras.backend.clear_session()
             autoencoder = build_autoencoder(**params1)
             classifier = build_classifier(**params2)
-            anomaly_detector = build_anomaly_detection_model(s, autoencoder, classifier)
+            anomaly_detector = build_anomaly_detection_model(s, autoencoder, classifier, show_graph=True)
             anomaly_models.append(anomaly_detector)
             model_path = create_model_path(s)
             model_paths.append(model_path)
