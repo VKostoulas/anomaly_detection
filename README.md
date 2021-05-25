@@ -2,5 +2,3 @@
 
 - **architectures** contains all the custom network architectures.
 - **functions** contains all the functions that are used everywhere in the project.
-
-The project is not ready to use yet. Working on it!
